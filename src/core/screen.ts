@@ -3,8 +3,9 @@ export const ASPECT_RATIO = 7 / 4
 export class Screen {
     canvas: HTMLCanvasElement
     ctx: CanvasRenderingContext2D
-    width: number = 100
-    height: number = 100 * ASPECT_RATIO
+    width = 200
+    height = 200 * ASPECT_RATIO
+    ppu = 1
     onResize?: () => void
 
     constructor(canvas: HTMLCanvasElement) {
@@ -21,11 +22,34 @@ export class Screen {
         const width = document.body.clientWidth
         const height = document.body.clientHeight
 
-        const scale = Math.min(width, height / ASPECT_RATIO)
-        this.width = scale
-        this.height = scale * ASPECT_RATIO
-        this.canvas.width = this.width
-        this.canvas.height = this.height
+        const scale = Math.min(width / this.width, height / this.height)
+        this.canvas.width = scale * this.width
+        this.canvas.height = scale * this.height
+        this.ppu = scale
         if (this.onResize) this.onResize()
+    }
+
+    drawText(text: string, x: number, y: number, color: string, fontSize: number, maxWidth?: number) {
+        x *= this.ppu
+        y *= this.ppu
+        fontSize *= this.ppu
+        if (maxWidth) maxWidth *= this.ppu
+        this.ctx.fillStyle = color
+        this.ctx.font = `${fontSize}px serif`
+        this.ctx.textBaseline = "top"
+        this.ctx.fillText(text, x, y, maxWidth)
+    }
+
+    drawRect(x: number, y: number, w: number, h: number, color: string) {
+        x *= this.ppu
+        y *= this.ppu
+        w *= this.ppu
+        h *= this.ppu
+        this.ctx.fillStyle = color
+        this.ctx.fillRect(x, y, w, h)
+    }
+
+    clear() {
+        this.ctx.clearRect(0, 0, this.width * this.ppu, this.height * this.ppu)
     }
 }

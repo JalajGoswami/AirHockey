@@ -10,7 +10,7 @@ export interface Entity extends InstanceType<Constructor> {
 }
 
 export interface System {
-    update(entities: Entity[], dt: number): void
+    update(entities: Entity[], dt: number, tick: number): void
 }
 
 export class Game {
@@ -20,13 +20,14 @@ export class Game {
     private targetFPS = 60
     private targetFrameTime = 1000 / this.targetFPS
     private timeStamp = Date.now()
+    private tick = 0
 
     constructor(screen: Screen) {
         this.screen = screen
     }
 
     private draw() {
-        this.screen.ctx.clearRect(0, 0, this.screen.width, this.screen.height)
+        this.screen.clear()
         for (const entity of this.entities) {
             entity.draw(this.screen)
         }
@@ -34,11 +35,12 @@ export class Game {
 
     private update(dt: number) {
         for (const system of this.systems) {
-            system.update(this.entities, dt)
+            system.update(this.entities, dt, this.tick)
         }
     }
 
     runLoop() {
+        this.tick = (this.tick + 1) % 1000
         const dt = Date.now() - this.timeStamp
         if (dt <= this.targetFrameTime / 2) {
             // just for saving compute
@@ -63,7 +65,7 @@ export class Game {
     }
 
     /**
-     * Does not ensure desired fps, only for optimization purpose only
+     * Does not ensure desired fps, only for debug purpose only
      */
     setTargetFPS(fps: 30 | 60 | 75 | 90) {
         this.targetFPS = fps

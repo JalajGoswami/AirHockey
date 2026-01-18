@@ -1,22 +1,17 @@
 import { Game } from "./core/entity"
 import { Screen } from "./core/screen"
+import { DebugOverlay, OverlayComponent, OverlaySystem } from "./debug_overlay"
 
 const canvas = document.getElementById('canvas') as HTMLCanvasElement
 if (!canvas) throw Error('no canvas found for drawing')
 
 const screen = new Screen(canvas)
 
-// draw(screen.ctx)
-//
-// screen.onResize = () => draw(screen.ctx)
-//
-// function draw(ctx: CanvasRenderingContext2D) {
-//     ctx.fillStyle = "rgb(200 0 0)"
-//     ctx.fillRect(0, 0, canvas.width, canvas.height)
-// }
-
 const game = new Game(screen)
 
-game.setTargetFPS(30)
+// game.setTargetFPS(30)
+
+game.addEntity(new DebugOverlay().addComponent(new OverlayComponent()))
+game.addSystem(new OverlaySystem())
 
 game.runLoop()
