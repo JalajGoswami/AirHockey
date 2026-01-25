@@ -51,5 +51,6 @@ export class Screen {
 
     clear() {
         this.ctx.clearRect(0, 0, this.width * this.ppu, this.height * this.ppu)
+        this.drawRect(0, 0, this.width * this.ppu, this.height * this.ppu, '#30364F')
     }
 }

@@ -5,12 +5,11 @@ export type Constructor = abstract new (...args: any) => any
 export interface Entity extends InstanceType<Constructor> {
     draw(screen: Screen): void
     getComponent<T extends Constructor>(component_type: T): InstanceType<T> | null
-    hasComponent(component_type: Constructor): boolean
     addComponent(component: object): Entity
 }
 
 export interface System {
-    update(entities: Entity[], dt: number, tick: number): void
+    update(entities: Entity[], dt: number, tick: number, screen: Screen): void
 }
 
 export class Game {
@@ -35,7 +34,7 @@ export class Game {
 
     private update(dt: number) {
         for (const system of this.systems) {
-            system.update(this.entities, dt, this.tick)
+            system.update(this.entities, dt, this.tick, this.screen)
         }
     }
 
@@ -49,7 +48,7 @@ export class Game {
         }
 
         this.timeStamp = Date.now()
-        this.update(dt)
+        this.update(dt / 1000)
         this.draw()
 
         requestAnimationFrame(this.runLoop.bind(this))
