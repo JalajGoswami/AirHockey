@@ -1,3 +1,5 @@
+import { COLORS } from "./constants"
+
 export const ASPECT_RATIO = 7 / 4
 
 export class Screen {
@@ -49,8 +51,19 @@ export class Screen {
         this.ctx.fillRect(x, y, w, h)
     }
 
+    drawDisc(x: number, y: number, r: number, color: string) {
+        x *= this.ppu
+        y *= this.ppu
+        r *= this.ppu
+        this.ctx.beginPath()
+        this.ctx.arc(x, y, r, 0, Math.PI * 2, false)
+        this.ctx.fillStyle = color
+        this.ctx.fill()
+        this.ctx.closePath()
+    }
+
     clear() {
         this.ctx.clearRect(0, 0, this.width * this.ppu, this.height * this.ppu)
-        this.drawRect(0, 0, this.width * this.ppu, this.height * this.ppu, '#30364F')
+        this.drawRect(0, 0, this.width * this.ppu, this.height * this.ppu, COLORS.DARK_BLUE)
     }
 }

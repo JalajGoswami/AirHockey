@@ -2,10 +2,19 @@ import { Screen } from "./screen"
 
 export type Constructor = abstract new (...args: any) => any
 
-export interface Entity extends InstanceType<Constructor> {
-    draw(screen: Screen): void
-    getComponent<T extends Constructor>(component_type: T): InstanceType<T> | null
-    addComponent(component: object): Entity
+export abstract class Entity {
+    private components: Record<string, object> = {}
+
+    abstract draw(screen: Screen): void
+
+    getComponent<T extends Constructor>(component_type: T): InstanceType<T> | null {
+        const component = this.components[component_type.name] as InstanceType<T> | undefined
+        return component || null
+    }
+    addComponent(component: object): this {
+        this.components[component.constructor.name] = component
+        return this
+    }
 }
 
 export interface System {

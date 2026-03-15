@@ -1,4 +1,5 @@
-import type { Constructor, Entity, System } from "./core/entity"
+import { COLORS } from "./core/constants"
+import { Entity, type Constructor, type System } from "./core/entity"
 import type { Screen } from "./core/screen"
 
 export class OverlayComponent {
@@ -6,25 +7,26 @@ export class OverlayComponent {
     fps: number = 60
 }
 
-export class DebugOverlay implements Entity {
+export class DebugOverlay extends Entity {
     private component: OverlayComponent | null = null
     private message: string | null = null
 
     constructor() {
+        super()
         window.addEventListener('debug_message', (e) => (this.message = String((e as CustomEvent).detail)))
     }
 
     draw(screen: Screen): void {
         if (!this.component) return
-        screen.drawRect(0, 0, 40, this.message ? 25 : 20, "#ddddeeaa")
+        screen.drawRect(0, 0, 40, this.message ? 25 : 20, COLORS.WHITE)
         const fps = this.component.fps.toFixed(2) + "fps"
-        screen.drawText(fps, 5, 5, "#ee1100", 8)
+        screen.drawText(fps, 5, 5, COLORS.TANGY_RED, 8)
         if (this.message) {
-            screen.drawText(this.message, 5, 15, "#5B23FF", 8)
+            screen.drawText(this.message, 5, 15, COLORS.BLUE, 8)
         }
     }
 
-    addComponent(component: OverlayComponent): DebugOverlay {
+    addComponent(component: OverlayComponent): this {
         this.component = component
         return this
     }

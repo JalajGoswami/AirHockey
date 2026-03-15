@@ -12,8 +12,29 @@ export class Movement {
     dy = 0
 }
 
-export class MovementSystem implements System {
+// assumed: all objects are disck in shape
+export class Size {
+    size = 0
+    constructor(size: number) { this.size = size }
+}
 
+export class PositionConstraints implements System {
+    update(entities: Entity[], _: number, __: number, screen: Screen): void {
+        for (const entity of entities) {
+            const position = entity.getComponent(Position)
+            if (!position) continue
+            const size = entity.getComponent(Size)?.size || 0
+            window.dispatchEvent(new CustomEvent("debug_message", { detail: [position.x, position.y] }))
+
+            position.x = Math.max(size / 2, position.x)
+            position.x = Math.min(screen.width - size / 2, position.x)
+            position.y = Math.max(size / 2, position.y)
+            position.y = Math.min(screen.height - size / 2, position.y)
+        }
+    }
+}
+
+export class MovementSystem implements System {
     update(entities: Entity[], dt: number, _: number, __: Screen): void {
         for (const entity of entities) {
             const position = entity.getComponent(Position)
